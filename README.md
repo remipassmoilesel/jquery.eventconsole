@@ -1,4 +1,4 @@
-# jquery.envent-console.js
+# jquery.event-console.js
 
 Small plugin for debugging.
 
