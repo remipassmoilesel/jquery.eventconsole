@@ -8,3 +8,7 @@ Usage:
     <div id="eventsConsole"></div>
     <script>$("#eventsConsole").eventConsole();</script>
     ```
+
+##Screenshot
+
+![Screenshot](screenshot.png)

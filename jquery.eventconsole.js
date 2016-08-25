@@ -49,9 +49,10 @@
 
           var log = $("<div>" + "#" + jqueryEventNumber
 
-              + " Event name: <b>" + name + "</b> " + new Date().toString() + " <br/>" +
+              + " Event name: <b style='color: yellow'>" + name + "</b> " + new Date().toString() +
+              " <br/>" +
 
-              "Data: " + arguments[0].data + "</br>" + "</div>")
+              "Data: " + event.data + "</br>" + "</div>")
 
               .css({
                 border : "solid 1px gray",
@@ -59,6 +60,17 @@
                 margin : "10px",
                 'word-wrap' : 'break-all'
               });
+
+          // link to log in console
+          $('<a>').text('Log in console').css({
+            display : 'block', 'text-align' : 'right', cursor : 'pointer'
+          }).click(function() {
+            console.info('Event console');
+            console.info('Event name: ' + name);
+            console.info({
+              name : name, data : event.data, event : event
+            });
+          }).appendTo(log);
 
           logSpace.append(log);
 
