@@ -1,76 +1,80 @@
 /**
-
- Console d'évenements Jquery pour debuggage
-
+ * Small utility used to display jquery events
+ *
  */
-(function ($) {
+;(function($) {
+  $.fn.extend({
 
-    $.fn.eventConsole = function (logInBrowserConsole) {
+    eventConsole : function(options) {
+      this.defaultOptions = {};
 
-        this.logInBrowserConsole = logInBrowserConsole;
-        this.jqueryEventNumber = 0;
+      var settings = $.extend({}, this.defaultOptions, options);
 
-        var title = $("<div>Evènements JQuery: </div>")
+      return this.each(function() {
+
+        var $this = $(this);
+
+        // count how many events
+        var jqueryEventNumber = 0;
+
+        // add title
+        var title = $("<div>JQuery Events</div>")
             .css({
-                'font-weight': 'bolder',
-                'margin': "10px"
+              'font-weight' : 'bolder',
+
+              'margin' : "10px"
             });
-        this.append(title);
 
-        this.append("<div id='eventConsole_logspace'></div>");
+        $this.append(title);
 
-        // mise en forme de la console
-        $("#eventConsole_logspace").css({
-            'fontSize': '12px',
-            'background': 'black',
-            'color': 'white',
-            'width': "100%",
-            'maxHeight': '200px',
-            'height': '200px',
-            'overflow': 'auto'
+        // add log space
+        var logSpace = $("<div id='eventConsole_logspace'></div>").css({
+          'fontSize' : '12px',
+          'background' : 'black',
+          'color' : 'white',
+          'height' : '300px',
+          'overflow' : 'auto',
+          'word-wrap' : 'break-word'
         });
+        $this.append(logSpace);
 
-
-        // surcharge de la méthode trigger
-        var self = this;
+        // Override jquery trigger method to display all events in console
+        var self = $this;
         var superJQueryEventTrigger = $.event.trigger;
-        $.event.trigger = function (event, data, elem, onlyHandlers) {
+        $.event.trigger = function(event, data, elem, onlyHandlers) {
 
-            self.jqueryEventNumber++;
+          jqueryEventNumber++;
 
-            var logSpace = $("#eventConsole_logspace");
+          var name = typeof arguments[0] === "string" ? arguments[0] : arguments[0].type;
 
-            var name = typeof arguments[0] === "string" ? arguments[0] : arguments[0].type;
+          var log = $("<div>" + "#" + jqueryEventNumber
 
-            if (this.logInBrowserConsole) {
-                console.log("#" + self.jqueryEventNumber + " Event name: ");
-                console.log(arguments);
-            }
+              + " Event name: <b>" + name + "</b> " + new Date().toString() + " <br/>" +
 
-            var log = $("<div>"
-                + "#" + self.jqueryEventNumber + " Event name: <b>" + name + "</b> " + new Date().toString() + " <br/>"
-                + "Data: " + arguments[0].data + "</br>"
-                + "</div>")
-                .css({
-                    border: "solid 1px gray",
-                    padding: "5px",
-                    margin: "10px"
-                });
+              "Data: " + arguments[0].data + "</br>" + "</div>")
 
-            logSpace.append(log);
+              .css({
+                border : "solid 1px gray",
+                padding : "5px",
+                margin : "10px",
+                'word-wrap' : 'break-all'
+              });
 
-            // scroll vers le bas
-            if (logSpace[0]) {
-                var height = logSpace[0].scrollHeight;
-                logSpace.scrollTop(height);
-            }
+          logSpace.append(log);
 
-            // appel de la super méthode
-            superJQueryEventTrigger(event, data, elem, onlyHandlers);
-        }
+          // scroll down
+          if (logSpace[0]) {
+            var height = logSpace[0].scrollHeight;
+            logSpace.scrollTop(height);
+          }
+
+          // call super method
+          superJQueryEventTrigger(event, data, elem, onlyHandlers);
+        };
 
         return this;
 
-    };
-
-}(jQuery));
+      });
+    }
+  });
+})(jQuery);
